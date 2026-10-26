@@ -1,0 +1,98 @@
+[
+  {
+    "id": "TC1",
+    "category": "Foreign key constraint",
+    "action": "Insert a loan for member_id 99, which does not exist",
+    "expected": "Rejected by fk_loan_member",
+    "actual": "Rejected: ERROR 1452 ER_NO_REFERENCED_ROW_2 (fk_loan_member)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC2",
+    "category": "Foreign key constraint",
+    "action": "Insert a copy of ISBN '9789999999999', a book that does not exist",
+    "expected": "Rejected by fk_copy_book",
+    "actual": "Rejected: ERROR 1452 ER_NO_REFERENCED_ROW_2 (fk_copy_book)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC3",
+    "category": "Foreign key (ON DELETE RESTRICT)",
+    "action": "Delete member 1, who has two outstanding loans",
+    "expected": "Rejected by fk_loan_member; nothing deleted",
+    "actual": "Rejected: ERROR 1451 ER_ROW_IS_REFERENCED_2 (fk_loan_member)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC4",
+    "category": "Related records",
+    "action": "Query all loans of the member riya@example.com",
+    "expected": "2 loans: loan 1 (An Introduction to Database Systems) and loan 2 (Designing Data-Intensive Applications)",
+    "actual": "2 loans: loan 1 (An Introduction to Database Systems) and loan 2 (Designing Data-Intensive Applications)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC5",
+    "category": "Data retrieval",
+    "action": "Query available copies of 'Designing Data-Intensive Applications'",
+    "expected": "1 available copy: shelf C-302 (C-301 is on loan)",
+    "actual": "1 available copy: shelf C-302",
+    "result": "PASS"
+  },
+  {
+    "id": "TC6",
+    "category": "Summarise related data",
+    "action": "Count total, available and on-loan copies across the library",
+    "expected": "8 copies: 6 available, 2 on loan",
+    "actual": "8 copies: 6 available, 2 on loan",
+    "result": "PASS"
+  },
+  {
+    "id": "TC7",
+    "category": "Alternate key (UNIQUE)",
+    "action": "Register a new member with the existing email riya@example.com",
+    "expected": "Rejected by uq_member_email",
+    "actual": "Rejected: ERROR 1062 ER_DUP_ENTRY (member.uq_member_email)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC8",
+    "category": "1:1 relationship (shared PK/FK)",
+    "action": "Issue a second library card to member 1",
+    "expected": "Rejected by the library_card primary key",
+    "actual": "Rejected: ERROR 1062 ER_DUP_ENTRY (library_card.PRIMARY)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC9",
+    "category": "CHECK constraint",
+    "action": "Insert a loan whose due date is before its issue date",
+    "expected": "Rejected by chk_loan_dates",
+    "actual": "Rejected: ERROR 3819 ER_CHECK_CONSTRAINT_VIOLATED (chk_loan_dates)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC10",
+    "category": "Foreign key (ON DELETE CASCADE)",
+    "action": "Delete book '9780073523323', then count its copies and author links",
+    "expected": "Book deleted; its 3 copies and 3 book_author rows removed automatically (0 left)",
+    "actual": "Book deleted; 0 copies and 0 book_author rows left (library now holds 5 copies, was 8)",
+    "result": "PASS"
+  },
+  {
+    "id": "TC11",
+    "category": "Foreign key (ON DELETE SET NULL)",
+    "action": "Delete publisher 3 (MIT Press), then look at its book",
+    "expected": "Book '9780262033848' is kept, with publisher_id NULL",
+    "actual": "Book '9780262033848' is kept, with publisher_id NULL",
+    "result": "PASS"
+  },
+  {
+    "id": "TC12",
+    "category": "Calculation",
+    "action": "Find overdue loans on 2026-10-26 and the fine owed at Rs 5 per day",
+    "expected": "2 overdue loans: 22 days (Rs 110) and 20 days (Rs 100); total Rs 210",
+    "actual": "2 overdue loans: 22 days (Rs 110) and 20 days (Rs 100); total Rs 210",
+    "result": "PASS"
+  }
+]

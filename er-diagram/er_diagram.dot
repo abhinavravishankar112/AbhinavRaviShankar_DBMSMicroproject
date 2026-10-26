@@ -1,0 +1,87 @@
+// Conceptual ER diagram (Chen notation) of the Library Management System
+// Render:  dot -Tpng -Gdpi=200 er_diagram.dot -o er_diagram.png
+graph library_er {
+  graph [layout=neato, overlap=false, splines=true, sep="+14", pad=0.4, bgcolor="white",
+         fontname="Helvetica", fontsize=20, labelloc=t,
+         label=<<b>Library Management System — ER Diagram (Chen notation)</b><br/><font point-size="12" color="#555555">Rectangle = entity · double rectangle = weak / existence-dependent entity · diamond = relationship · underlined = key · dashed ellipse = alternate key<br/>Double line = total participation · cardinality shown on each edge</font><br/> >];
+  node  [fontname="Helvetica", fontsize=12];
+  edge  [fontname="Helvetica", fontsize=12, color="#44525e", len=1.4];
+
+  // ---------- Entities ----------
+  node [shape=box, style="filled", fillcolor="#e8f0f7", color="#1f5f8b", penwidth=1.6];
+  MEMBER    [label="MEMBER",    pos="0,0!"];
+  CARD      [label="LIBRARY_CARD", peripheries=2, pos="-4.2,-2.6!"];
+  LOAN      [label="LOAN",      shape=box, peripheries=1, pos="4.2,0!", fillcolor="#eef6ee", color="#1d7a46"];
+  COPY      [label="COPY",      peripheries=2, pos="8.4,0!"];
+  BOOK      [label="BOOK",      pos="8.4,-5!"];
+  AUTHOR    [label="AUTHOR",    pos="3,-9.5!"];
+  PUBLISHER [label="PUBLISHER", pos="13.6,-5!"];
+
+  // ---------- Relationships ----------
+  node [shape=diamond, style="filled", fillcolor="#fdf6e3", color="#a06a00", penwidth=1.4, fontsize=11];
+  HOLDS     [label="HOLDS",      pos="-2.1,-1.3!"];
+  BORROWS   [label="BORROWS",    pos="2.1,0!"];
+  LENT_AS   [label="LENT AS",    pos="6.3,0!"];
+  HAS_COPY  [label="HAS COPY",   pos="8.4,-2.5!", peripheries=2];
+  WRITTEN_BY[label="WRITTEN BY\n(book_author)", pos="5.7,-7.3!"];
+  PUBLISHES [label="PUBLISHES",  pos="11,-5!"];
+
+  // ---------- Attributes ----------
+  node [shape=ellipse, style="filled", fillcolor="white", color="#7a8590", penwidth=1, fontsize=11, peripheries=1];
+  m_id   [label=<<u>member_id</u>>, pos="-1.6,1.6!"];
+  m_mail [label="email", style="dashed,filled", pos="0,2!"];
+  m_ph   [label="phone", style="dashed,filled", pos="1.6,1.6!"];
+  m_name [label="full_name", pos="-2.6,0.4!"];
+  m_join [label="joined_on", pos="-2.8,-0.4!"];
+
+  c_no   [label="card_number", style="dashed,filled", pos="-6.4,-2!"];
+  c_iss  [label="issued_on",   pos="-5.8,-3.8!"];
+  c_mid  [label=<<u>member_id</u> (PK = FK)>, pos="-3,-4!"];
+
+  l_id   [label=<<u>loan_id</u>>, pos="3,1.7!"];
+  l_iss  [label="issued_on",   pos="4.4,2.1!"];
+  l_due  [label="due_on",      pos="5.8,1.7!"];
+  l_ret  [label="returned_on", pos="4.2,-1.4!"];
+
+  cp_id  [label=<<u>copy_id</u>>, pos="10.2,1.4!"];
+  cp_sh  [label="shelf_code", style="dashed,filled", pos="8.4,1.8!"];
+  cp_st  [label="status",     pos="10.6,0!"];
+
+  b_isbn [label=<<u>isbn</u>>, pos="10.2,-6.8!"];
+  b_ti   [label="title",        pos="8.4,-6.9!"];
+  b_yr   [label="published_yr", pos="6.5,-5.4!"];
+
+  a_id   [label=<<u>author_id</u>>, pos="1.2,-10.5!"];
+  a_nm   [label="author_name",   pos="3,-11!"];
+  a_ct   [label="country",       pos="4.8,-10.6!"];
+  ba_rl  [label="role",          pos="7.6,-8.4!"];
+
+  p_id   [label=<<u>publisher_id</u>>, pos="15.4,-4!"];
+  p_nm   [label="name", style="dashed,filled", pos="15.4,-6!"];
+
+  // ---------- Attribute edges ----------
+  edge [color="#9aa3ab", penwidth=1, len=1];
+  MEMBER -- m_id; MEMBER -- m_mail; MEMBER -- m_ph; MEMBER -- m_name; MEMBER -- m_join;
+  CARD -- c_no; CARD -- c_iss; CARD -- c_mid;
+  LOAN -- l_id; LOAN -- l_iss; LOAN -- l_due; LOAN -- l_ret;
+  COPY -- cp_id; COPY -- cp_sh; COPY -- cp_st;
+  BOOK -- b_isbn; BOOK -- b_ti; BOOK -- b_yr;
+  AUTHOR -- a_id; AUTHOR -- a_nm; AUTHOR -- a_ct;
+  WRITTEN_BY -- ba_rl;
+  PUBLISHER -- p_id; PUBLISHER -- p_nm;
+
+  // ---------- Relationship edges (label = cardinality) ----------
+  edge [color="#44525e", penwidth=1.6, fontcolor="#1f2328"];
+  MEMBER -- HOLDS      [label="1"];
+  HOLDS  -- CARD       [label="1", color="#44525e:#44525e"];       // total
+  MEMBER -- BORROWS    [label="1"];
+  BORROWS -- LOAN      [label="N", color="#44525e:#44525e"];       // total
+  LOAN   -- LENT_AS    [label="N", color="#44525e:#44525e"];       // total
+  LENT_AS -- COPY      [label="1"];
+  BOOK   -- HAS_COPY   [label="1"];
+  HAS_COPY -- COPY     [label="N", color="#44525e:#44525e"];       // total
+  BOOK   -- WRITTEN_BY [label="M"];
+  WRITTEN_BY -- AUTHOR [label="N"];
+  PUBLISHER -- PUBLISHES [label="1"];
+  PUBLISHES -- BOOK    [label="N"];
+}

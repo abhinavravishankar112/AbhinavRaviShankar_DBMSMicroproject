@@ -1,0 +1,93 @@
+// Relational schema of library_db (Report Figure 2.1)
+// Render:  dot -Tpng -Gdpi=200 relational_schema.dot -o relational_schema.png
+digraph library_db {
+  graph [rankdir=LR, splines=spline, nodesep=0.55, ranksep=1.1, pad=0.4, bgcolor="white",
+         fontname="Helvetica", labelloc=t, fontsize=20,
+         label=<<b>library_db — Relational Schema</b><br/><font point-size="5"> </font><br/><font point-size="12" color="#555555">PK primary key · AK alternate key (UNIQUE) · FK foreign key · edge label = cardinality, ON DELETE action</font><br/> >];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10, color="#44525e", arrowhead=none, arrowtail=none, dir=both];
+
+  member [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>member</b></font></td></tr>
+      <tr><td bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>member_id</u></b></td><td port="pk" align="left">INT AI</td></tr>
+      <tr><td bgcolor="#f3efe2">AK</td><td align="left">email</td><td align="left">VARCHAR(100)</td></tr>
+      <tr><td bgcolor="#f3efe2">AK</td><td align="left">phone</td><td align="left">CHAR(10)</td></tr>
+      <tr><td></td><td align="left">full_name</td><td align="left">VARCHAR(80)</td></tr>
+      <tr><td></td><td align="left">joined_on</td><td align="left">DATE</td></tr>
+    </table>>];
+
+  library_card [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>library_card</b></font></td></tr>
+      <tr><td port="pk" bgcolor="#e8f0f7"><b>PK, FK</b></td><td align="left"><b><u>member_id</u></b></td><td align="left">INT</td></tr>
+      <tr><td bgcolor="#f3efe2">AK</td><td align="left">card_number</td><td align="left">CHAR(12)</td></tr>
+      <tr><td></td><td align="left">issued_on</td><td align="left">DATE</td></tr>
+    </table>>];
+
+  publisher [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>publisher</b></font></td></tr>
+      <tr><td bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>publisher_id</u></b></td><td port="pk" align="left">INT AI</td></tr>
+      <tr><td bgcolor="#f3efe2">AK</td><td align="left">name</td><td align="left">VARCHAR(80)</td></tr>
+    </table>>];
+
+  author [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>author</b></font></td></tr>
+      <tr><td bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>author_id</u></b></td><td port="pk" align="left">INT AI</td></tr>
+      <tr><td></td><td align="left">author_name</td><td align="left">VARCHAR(80)</td></tr>
+      <tr><td></td><td align="left">country</td><td align="left">VARCHAR(50)</td></tr>
+    </table>>];
+
+  book [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>book</b></font></td></tr>
+      <tr><td bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>isbn</u></b> (natural)</td><td port="pk" align="left">CHAR(13)</td></tr>
+      <tr><td></td><td align="left">title</td><td align="left">VARCHAR(150)</td></tr>
+      <tr><td port="fk" bgcolor="#f6e5e3">FK</td><td align="left">publisher_id <i>(nullable)</i></td><td align="left">INT</td></tr>
+      <tr><td></td><td align="left">published_yr</td><td align="left">SMALLINT</td></tr>
+    </table>>];
+
+  book_author [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>book_author</b>  (junction)</font></td></tr>
+      <tr><td port="isbn" bgcolor="#e8f0f7"><b>PK, FK</b></td><td align="left"><b><u>isbn</u></b></td><td align="left">CHAR(13)</td></tr>
+      <tr><td port="aid" bgcolor="#e8f0f7"><b>PK, FK</b></td><td align="left"><b><u>author_id</u></b></td><td align="left">INT</td></tr>
+      <tr><td></td><td align="left">role</td><td align="left">ENUM</td></tr>
+    </table>>];
+
+  copy [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>copy</b></font></td></tr>
+      <tr><td bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>copy_id</u></b></td><td port="pk" align="left">INT AI</td></tr>
+      <tr><td port="fk" bgcolor="#f6e5e3">FK</td><td align="left">isbn</td><td align="left">CHAR(13)</td></tr>
+      <tr><td bgcolor="#f3efe2">AK</td><td align="left">shelf_code</td><td align="left">VARCHAR(10)</td></tr>
+      <tr><td></td><td align="left">status</td><td align="left">ENUM</td></tr>
+    </table>>];
+
+  loan [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="5" color="#1f5f8b">
+      <tr><td bgcolor="#1f5f8b" colspan="3"><font color="white"><b>loan</b>  (associative entity)</font></td></tr>
+      <tr><td port="pk" bgcolor="#e8f0f7"><b>PK</b></td><td align="left"><b><u>loan_id</u></b></td><td align="left">INT AI</td></tr>
+      <tr><td port="cid" bgcolor="#f6e5e3">FK</td><td align="left">copy_id</td><td align="left">INT</td></tr>
+      <tr><td port="mid" bgcolor="#f6e5e3">FK</td><td align="left">member_id</td><td align="left">INT</td></tr>
+      <tr><td></td><td align="left">issued_on</td><td align="left">DATE</td></tr>
+      <tr><td></td><td align="left">due_on</td><td align="left">DATE</td></tr>
+      <tr><td></td><td align="left">returned_on</td><td align="left">DATE NULL</td></tr>
+      <tr><td colspan="3" bgcolor="#f7f7f7"><font point-size="10">CHECK chk_loan_dates: due_on &gt;= issued_on</font></td></tr>
+    </table>>];
+
+  // tail = parent ("one" side, tee), head = child ("many" side, crow)
+  member:pk:e    -> library_card:pk:w [arrowtail=teetee, arrowhead=teeodot,  label="1 : 1\nCASCADE",  color="#1d7a46", fontcolor="#1d7a46"];
+  member:pk:e    -> loan:mid:w        [arrowtail=teetee, arrowhead=crowodot, label="1 : N\nRESTRICT", color="#b3261e", fontcolor="#b3261e"];
+  copy:pk:e      -> loan:cid:w        [arrowtail=teetee, arrowhead=crowodot, label="1 : N\nRESTRICT", color="#b3261e", fontcolor="#b3261e"];
+  book:pk:e      -> copy:fk:w         [arrowtail=teetee, arrowhead=crowtee,  label="1 : N\nCASCADE",  color="#1d7a46", fontcolor="#1d7a46"];
+  book:pk:e      -> book_author:isbn:w [arrowtail=teetee, arrowhead=crowodot, label="M : N (via junction)\nCASCADE", color="#1d7a46", fontcolor="#1d7a46"];
+  author:pk:e    -> book_author:aid:w  [arrowtail=teetee, arrowhead=crowodot, label="M : N (via junction)\nCASCADE", color="#1d7a46", fontcolor="#1d7a46"];
+  publisher:pk:e -> book:fk:w         [arrowtail=teeodot, arrowhead=crowodot, label="1 : N\nSET NULL", color="#a06a00", fontcolor="#a06a00"];
+
+  { rank=same; member; publisher; author; }
+  { rank=same; library_card; book; book_author; }
+  { rank=same; copy; }
+}
